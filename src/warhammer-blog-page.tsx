@@ -70,8 +70,36 @@ const HomePage = () => {
     fetchArticles();
   }, [selectedCategory]);
 
-  const handleReadMore = (id: number) => {
+  const handleReadMore = async (id: number) => {
     setExpandedArticleId(expandedArticleId === id ? null : id);
+
+    // Increment the view count in the database
+    const { data, error: fetchError } = await supabase
+      .from('articles')
+      .select('views')
+      .eq('id', id)
+      .single();
+
+    if (fetchError) {
+      console.error('Error fetching current view count:', fetchError);
+      return;
+    }
+
+    const { error } = await supabase
+      .from('articles')
+      .update({ views: data.views + 1 })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error incrementing view count:', error);
+    } else {
+      // Update the local state to reflect the incremented view count
+      setArticles(prevArticles =>
+        prevArticles.map(article =>
+          article.id === id ? { ...article, views: article.views + 1 } : article
+        )
+      );
+    }
   };
 
   const handleClickOutside = (e: MouseEvent) => {
