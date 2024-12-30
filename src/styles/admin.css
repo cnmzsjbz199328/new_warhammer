@@ -1,23 +1,31 @@
 .admin-editor {
-  max-width: 800px;
+  display: flex;
+  gap: 3rem;
+  max-width: 1400px;
   margin: 2rem auto;
   padding: 2rem;
-  background-color: white;
+  background-color: #f9fafb;
   border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .editor-title {
-  font-size: 1.875rem;
+  font-size: 2.25rem;
   font-weight: bold;
-  color: #1f2937;
+  color: #111827;
   margin-bottom: 2rem;
+  text-align: center;
 }
 
 .editor-form {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .form-group {
@@ -27,18 +35,18 @@
 }
 
 .form-group label {
-  font-weight: 500;
+  font-weight: 600;
   color: #374151;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
-  padding: 0.5rem;
+  padding: 0.75rem;
   border: 1px solid #d1d5db;
   border-radius: 0.375rem;
   font-size: 1rem;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .form-group input:focus,
@@ -46,22 +54,23 @@
 .form-group textarea:focus {
   outline: none;
   border-color: #3b82f6;
-  ring: 2px solid #93c5fd;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .submit-button {
   padding: 0.75rem 1.5rem;
-  background-color: #1f2937;
+  background-color: #2563eb;
   color: white;
   border: none;
   border-radius: 0.375rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s;
+  align-self: flex-start;
 }
 
 .submit-button:hover {
-  background-color: #374151;
+  background-color: #1d4ed8;
 }
 
 .submit-button:disabled {
@@ -73,6 +82,7 @@
   padding: 1rem;
   border-radius: 0.375rem;
   margin-bottom: 1.5rem;
+  font-weight: 500;
 }
 
 .message.success {
@@ -93,7 +103,7 @@
 }
 
 .admin-nav .container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 1rem;
   display: flex;
@@ -118,10 +128,15 @@
 }
 
 .file-input {
-  padding: 0.5rem;
-  border: 1px dashed #d1d5db;
+  padding: 0.75rem;
+  border: 2px dashed #d1d5db;
   border-radius: 0.375rem;
   cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.file-input:hover {
+  border-color: #3b82f6;
 }
 
 .upload-status {
@@ -138,6 +153,7 @@
   width: 100%;
   height: auto;
   border-radius: 0.375rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .remove-image {
@@ -165,8 +181,8 @@
 }
 
 .uploaded-images h3 {
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 1.125rem;
+  font-weight: 600;
   color: #374151;
   margin-bottom: 1rem;
 }
@@ -181,7 +197,12 @@
   position: relative;
   border-radius: 0.375rem;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.image-item:hover {
+  transform: scale(1.05);
 }
 
 .image-item img {
@@ -204,7 +225,7 @@
   display: flex;
   gap: 0.5rem;
   padding: 0.5rem;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -240,4 +261,4 @@
 
 .delete-button:hover {
   background-color: #dc2626;
-} 
+}

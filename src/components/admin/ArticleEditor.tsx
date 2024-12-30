@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import LoginModal from './LoginModal';
 import ArticleList from './ArticleList'; // Add this line
+import '../../styles/ArticleList.css'; // Add this line
 
 interface ArticleFormData {
   title: string;
@@ -218,7 +219,7 @@ const ArticleEditor = () => {
         onLogin={handleLoginSuccess} 
       />
       
-      <h1 className="editor-title">发布新文章</h1>
+      
       
       {message && (
         <div className={`message ${message.type}`}>
@@ -227,6 +228,7 @@ const ArticleEditor = () => {
       )}
 
       <form onSubmit={handleSubmit} className="editor-form">
+      <h1 className="editor-title">发布新文章</h1>
         <div className="form-group">
           <label htmlFor="title">标题</label>
           <input

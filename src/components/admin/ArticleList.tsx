@@ -5,7 +5,7 @@ interface Article {
   id: number;
   title: string;
   category: string;
-  cover_image: string | null; // Add this line
+  cover_image: string | null;
   created_at: string;
 }
 
@@ -19,7 +19,7 @@ const ArticleList = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('articles')
-        .select('id, title, category, cover_image, created_at') // Add cover_image
+        .select('id, title, category, cover_image, created_at')
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -36,7 +36,6 @@ const ArticleList = () => {
 
   const handleDeleteArticle = async (id: number, coverImage: string | null) => {
     try {
-      // Delete the article from the database
       const { error: deleteError } = await supabase
         .from('articles')
         .delete()
@@ -46,13 +45,12 @@ const ArticleList = () => {
         throw deleteError;
       }
 
-      // Delete the cover image from storage if it exists
       if (coverImage) {
         const fileName = coverImage.split('/').pop();
         if (fileName) {
           const { error: storageError } = await supabase
             .storage
-            .from('picture') // Ensure the correct storage bucket is used
+            .from('picture')
             .remove([`article-covers/${fileName}`]);
 
           if (storageError) {
@@ -71,20 +69,31 @@ const ArticleList = () => {
 
   return (
     <div className="article-list">
-      <h2>文章列表</h2>
+      <h2 className="article-list-title">文章列表</h2>
       {message && (
         <div className={`message ${message.type}`}>
           {message.text}
         </div>
       )}
       {loading ? (
-        <p>加载中...</p>
+        <p className="loading">加载中...</p>
       ) : (
-        <ul>
+        <ul className="article-list-items">
           {articles.map(article => (
-            <li key={article.id}>
-              <span>{article.title} - {article.category} - {new Date(article.created_at).toLocaleDateString()}</span>
-              <button onClick={() => handleDeleteArticle(article.id, article.cover_image)}>删除</button>
+            <li key={article.id} className="article-list-item">
+              <div className="article-info">
+                <span className="article-title">{article.title}</span>
+                <span className="article-category">{article.category}</span>
+                <span className="article-date">{new Date(article.created_at).toLocaleDateString()}</span>
+              </div>
+              <div className="article-actions">
+                <button 
+                  className="delete-button" 
+                  onClick={() => handleDeleteArticle(article.id, article.cover_image)}
+                >
+                  删除
+                </button>
+              </div>
             </li>
           ))}
         </ul>
