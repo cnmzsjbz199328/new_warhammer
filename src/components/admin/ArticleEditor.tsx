@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import LoginModal from './LoginModal';
+import ArticleList from './ArticleList'; // Add this line
 
 interface ArticleFormData {
   title: string;
@@ -352,7 +353,8 @@ const ArticleEditor = () => {
           {isSubmitting ? '发布中...' : '发布文章'}
         </button>
       </form>
-      <div id="uploadResult"></div>
+      
+      <ArticleList /> {/* Add this line to include the ArticleList component */}
     </div>
   );
 };
