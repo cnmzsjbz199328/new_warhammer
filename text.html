@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Image Upload Test</title>
+</head>
+<body>
+    <h1>Supabase Image Upload Test</h1>
+    <input type="file" id="fileInput" />
+    <button id="uploadButton">Upload Image</button>
+    <div id="uploadResult"></div>
+    <img id="uploadedImage" style="display:none;" />
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        const supabaseUrl = 'https://fnqfkanmkybhtclhogev.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZucWZrYW5ta3liaHRjbGhvZ2V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ4ODM4OTQsImV4cCI6MjA1MDQ1OTg5NH0.YxUeBk0gqDFOe4YRPfjHWtR5qalj3OgZGR_9ATY3pAc';
+
+        const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+        document.getElementById('uploadButton').addEventListener('click', async () => {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a file to upload.');
+                return;
+            }
+
+            const { data, error } = await supabase.storage
+                .from('picture') // Replace with your bucket name
+                .upload(`public/${file.name}`, file); // Replace with desired path
+
+            const uploadResultDiv = document.getElementById('uploadResult');
+            if (error) {
+                uploadResultDiv.textContent = 'Error uploading file: ' + error.message;
+            } else {
+                const imageUrl = `${supabaseUrl}/storage/v1/object/picture/public/${file.name}`;
+                uploadResultDiv.innerHTML = `File uploaded successfully! <a href="${imageUrl}" target="_blank">View Image</a>`;
+                const uploadedImage = document.getElementById('uploadedImage');
+                uploadedImage.src = imageUrl;
+                uploadedImage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

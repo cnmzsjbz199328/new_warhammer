@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase User Management Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .message {
+            margin: 10px 0;
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Supabase User Management Test</h1>
+    <div>
+        <h2>登录</h2>
+        <input type="text" id="username" placeholder="用户名" />
+        <input type="password" id="password" placeholder="密码" />
+        <button id="loginButton">登录</button>
+        <p id="loginMessage"></p>
+    </div>
+
+    <div>
+        <h2>创建用户</h2>
+        <input type="text" id="newUsername" placeholder="用户名" />
+        <input type="password" id="newPassword" placeholder="密码" />
+        <button id="createUserButton">创建用户</button>
+        <p id="createUserMessage"></p>
+    </div>
+
+    <div>
+        <h2>浏览用户</h2>
+        <button id="fetchUsersButton">获取用户列表</button>
+        <div id="userList"></div>
+    </div>
+
+    <div>
+        <h2>删除用户</h2>
+        <input type="text" id="deleteUsername" placeholder="用户名" />
+        <button id="deleteUserButton">删除用户</button>
+        <p id="deleteUserMessage"></p>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        const supabaseUrl = 'https://fnqfkanmkybhtclhogev.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZucWZrYW5ta3liaHRjbGhvZ2V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ4ODM4OTQsImV4cCI6MjA1MDQ1OTg5NH0.YxUeBk0gqDFOe4YRPfjHWtR5qalj3OgZGR_9ATY3pAc';
+
+        const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+        // 登录
+        document.getElementById('loginButton').addEventListener('click', async () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const { data, error } = await supabase.auth.signIn({
+                email: username, // 如果需要使用用户名登录，确保在 Supabase 中配置
+                password: password,
+            });
+
+            const loginMessage = document.getElementById('loginMessage');
+            if (error) {
+                loginMessage.textContent = '登录失败: ' + error.message;
+                loginMessage.className = 'error';
+            } else {
+                loginMessage.textContent = '登录成功！';
+                loginMessage.className = 'message';
+                console.log('登录成功:', data);
+            }
+        });
+
+        // 创建用户功能
+        document.getElementById('createUserButton').addEventListener('click', async () => {
+            const newUsername = document.getElementById('newUsername').value;
+            const newPassword = document.getElementById('newPassword').value;
+
+            const { data, error } = await supabase.auth.signUp({
+                email: newUsername, // 这里仍然使用 email 字段
+                password: newPassword,
+            });
+
+            const createUserMessage = document.getElementById('createUserMessage');
+            if (error) {
+                createUserMessage.textContent = '创建用户失败: ' + error.message;
+                createUserMessage.className = 'error';
+            } else {
+                createUserMessage.textContent = '用户创建成功！';
+                createUserMessage.className = 'message';
+                console.log('创建用户成功:', data);
+
+                // 将用户信息插入到 admin_users 表中
+                const { data: insertData, error: insertError } = await supabase
+                    .from('admin_users')
+                    .insert([{ username: newUsername, password_hash: newPassword, created_at: new Date().toISOString() }])
+                    .select();
+
+                if (insertError) {
+                    console.error('插入用户信息到 admin_users 表失败:', insertError);
+                } else {
+                    console.log('用户信息成功插入到 admin_users 表:', insertData);
+                }
+            }
+        });
+
+        // 浏览用户功能
+        document.getElementById('fetchUsersButton').addEventListener('click', async () => {
+            const { data, error } = await supabase
+                .from('admin_users') 
+                .select('*');
+
+            const userList = document.getElementById('userList');
+            userList.innerHTML = ''; // 清空之前的用户列表
+
+            if (error) {
+                userList.textContent = '获取用户失败: ' + error.message;
+                userList.className = 'error';
+            } else {
+                data.forEach(user => {
+                    const userItem = document.createElement('div');
+                    userItem.textContent = `用户名: ${user.username}, 创建时间: ${user.created_at}`;
+                    userList.appendChild(userItem);
+                });
+                console.log('获取用户成功:', data);
+            }
+        });
+
+        // 删��用户功能
+        document.getElementById('deleteUserButton').addEventListener('click', async () => {
+            const deleteUsername = document.getElementById('deleteUsername').value;
+
+            const { data, error } = await supabase
+                .from('admin_users') // 替换为你的表名
+                .delete()
+                .eq('username', deleteUsername);
+
+            const deleteUserMessage = document.getElementById('deleteUserMessage');
+            if (error) {
+                deleteUserMessage.textContent = '删除用户失败: ' + error.message;
+                deleteUserMessage.className = 'error';
+            } else {
+                deleteUserMessage.textContent = '用户删除成功！';
+                deleteUserMessage.className = 'message';
+                console.log('删除用户成功:', data);
+            }
+        });
+    </script>
+</body>
+</html>
