@@ -210,7 +210,7 @@ const HomePage = () => {
                           ×
                         </button>
                         <div className="article-drawer-inner">
-                          <div className="article-drawer-body">
+                          <div className="article-drawer-body" style={{ whiteSpace: 'pre-wrap' }}>
                             {article.content}
                           </div>
                         </div>
