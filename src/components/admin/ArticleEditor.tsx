@@ -221,11 +221,7 @@ const ArticleEditor = () => {
       
       
       
-      {message && (
-        <div className={`message ${message.type}`}>
-          {message.text}
-        </div>
-      )}
+      
 
       <form onSubmit={handleSubmit} className="editor-form">
       <h1 className="editor-title">发布新文章</h1>
